@@ -92,9 +92,13 @@ export const refreshAccessToken = async (req: Request, res: Response, next: Next
       return next(new UnauthorizedError('Refresh-токен просрочен или невалиден'));
     }
 
-    const user = await User.findOne({ _id: payload._id, 'tokens.token': refreshToken });
+    const user = await User.findById(payload._id).select('+tokens');
 
     if (!user) {
+      return next(new NotFoundError('Пользователь не найден'));
+    }
+
+    if (!user.tokens.some((item) => item.token === refreshToken)) {
       return next(new UnauthorizedError('Refresh-токен просрочен или невалиден'));
     }
 
