@@ -1,4 +1,7 @@
+import fs from 'fs/promises';
 import { model, Schema } from 'mongoose';
+import path from 'path';
+import { UPLOAD_DIR } from '../config';
 
 export interface IFile {
   fileName: string;
@@ -46,5 +49,17 @@ const productSchema = new Schema<IProduct>(
   },
   { versionKey: false },
 );
+
+productSchema.post('findOneAndDelete', async (doc: IProduct | null) => {
+  if (!doc?.image?.fileName) {
+    return;
+  }
+
+  try {
+    await fs.unlink(path.join(UPLOAD_DIR, path.basename(doc.image.fileName)));
+  } catch (error) {
+    // файла может не быть в папке
+  }
+});
 
 export default model<IProduct>('product', productSchema);
