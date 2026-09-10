@@ -1,3 +1,4 @@
+import { isCelebrateError } from 'celebrate';
 import { NextFunction, Request, Response } from 'express';
 
 type AppError = Error & { statusCode?: number };
@@ -10,6 +11,14 @@ export default function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
+  if (isCelebrateError(err)) {
+    const message = Array.from(err.details.values())
+      .map((detail) => detail.message)
+      .join('; ');
+    res.status(400).send({ message });
+    return;
+  }
+
   if (err.name === MULTER_ERROR) {
     res.status(400).send({ message: `Ошибка загрузки файла: ${err.message}` });
     return;

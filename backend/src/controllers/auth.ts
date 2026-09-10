@@ -63,9 +63,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
-export const getCurrentUser = async (_req: Request, res: Response, next: NextFunction) => {
+export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(res.locals.user._id);
+    const user = await User.findById(req.user?._id);
 
     if (!user) {
       return next(new NotFoundError('Пользователь не найден'));

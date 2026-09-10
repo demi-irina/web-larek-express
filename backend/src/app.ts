@@ -1,4 +1,3 @@
-import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -27,7 +26,6 @@ app.use('/order', orderRouter);
 app.use('/upload', uploadRouter);
 app.use((_req, _res, next) => next(new NotFoundError('Маршрут не найден')));
 app.use(errorLogger);
-app.use(errors());
 app.use(errorHandler);
 
 mongoose
